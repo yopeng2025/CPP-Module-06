@@ -4,18 +4,39 @@
 
 C++ provides several casting operators that allow for type conversions. The most common casting operators include:
 
-1. **static_cast**: Used to convert between types safely at compile time. It is checked at compile time and can be used for converting between related types.
+1. **static_cast**: Used to convert between types safely at compile time.
    
    ```cpp
+   # 1. convert between related types
    int i = 10;
    double d = static_cast<double>(i);
+   
+   # 2. Upcast (derived class -> base class)
+   class Base {};
+   class Derived: public Base {};
+   Derived* d = new Derived();
+   Base* b = static_cast<Base*>(d);
    ```
 
-2. **dynamic_cast**: Used for safe downcasting of pointers and references to base or derived classes. It returns `nullptr` if the cast fails.
+2. **dynamic_cast**: Used for safe downcasting of pointers and references to base or derived classes. It returns `nullptr` if the pointer cast fails; throws `std::bad_cast` if reference cast fails.
    
    ```cpp
-   Base* b = new Derived();
-   Derived* d = dynamic_cast<Derived*>(b);
+   # Base class has to have a Destructor! Otherwise, a compiling error will occur.
+   class Base
+   {
+      public:
+         virtual ~Base() {}
+   };
+   class Derived: public Base {};
+   # point to Child class
+   Base* b1 = new Derived();
+   # point to Parent class
+   Base* b2 = new Base();
+
+   # success: d1 is not nullptr
+   Derived* d1 = dynamic_cast<Derived*>(b1);
+   # fail: d2 is nullptr (because b2 is not Derived)
+   Derived* d2 = dynamic_cast<Derived*>(b2);
    ```
 
 3. **const_cast**: Used to add or remove `const` qualifier from a variable.
